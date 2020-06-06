@@ -73,7 +73,7 @@ Once the UTXO enters into the phase 2 the user has officially “locked in” th
 
 If the user cannot provide an answer that both matches their hash from phase 1 and solves the problem, then they cannot submit a transaction that validates. Once the “answer period” expires then anyone has the right to spend the UTXO and recurse it back into phase 1. As such we have a system that prevents front-running of answers for locked funds on a public blockchain via a recursive protocol.
 
-Branching Protocolafter the recursion has completed
+Branching Protocol
 ---
 A branching protocol allows for any phase in the protocol to converge towards two or more different phases. This can be understood as essentially being an OR gate.
 
