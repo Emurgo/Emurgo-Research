@@ -102,9 +102,9 @@ Let’s use a naive example to look at how parallelized protocols could work. Th
 Four actors wish to run a small rock-paper-scissors tournament on-chain with an entry fee. Rather than waiting for each match to finish one-after-another, they intend to split the group in half and have two matches at the same time. The winner of each group faces the other to decide who is the champion (which wins the ability to withdraw all of the locked funds).
 
 The contact is split into three phases:
-Phase 1: Entrant Registration
-Phase 2: Parallelized Matches
-Phase 3: Final Match
+- Phase 1: Entrant Registration
+- Phase 2: Parallelized Matches
+- Phase 3: Final Match
 
 Phase 1 allows anyone to join the rps tournament by spending the phase into itself and adding funds equivalent to the entrance fee to the resulting UTXO.
 
