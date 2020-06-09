@@ -1,7 +1,7 @@
 # High Level Design Patterns In Extended UTXO Systems
 
 - Author: Robert Kornacki
-- Released: June 10 2020
+- Released: June 9 2020
 - Topics: Smart Contracts, UTXO-Model, Design Patterns, Automata
 
 Introduction
@@ -73,7 +73,7 @@ Once the UTXO enters into the phase 2 the user has officially “locked in” th
 
 If the user cannot provide an answer that both matches their hash from phase 1 and solves the problem, then they cannot submit a transaction that validates. Once the “answer period” expires then anyone has the right to spend the UTXO and recurse it back into phase 1. As such we have a system that prevents front-running of answers for locked funds on a public blockchain via a recursive protocol.
 
-Branching Protocol
+Branching Protocols
 ---
 A branching protocol allows for any phase in the protocol to converge towards two or more different phases. This can be understood as essentially being an OR gate.
 
@@ -87,7 +87,7 @@ It is also possible for a branching protocol to recurse on itself, becoming a re
 
 Branching protocols can be useful when the decisions of actors taking part in the protocol require different resulting states.
 
-Parallelized Protocol
+Parallelized Protocols
 ---
 As we saw in the previous section, branching acts as an OR path, meaning that only one output UTXO from the spending transaction is created. In contrast, parallelized protocols act as an AND path where 2 or more output UTXOs are generated each in it's own stage/phase. These parallelized UTXOs can then converge back together once they have performed all of the required computations for a new consolidated state of the protocol.
 
@@ -121,7 +121,7 @@ As such we have parallelized the matches within a on-chain tournament and unifie
 Parallelized protocols likely have a number of potential use cases past on-chain tournaments, and thus are a good option to consider when building protocols which rely on multiple actors who all need to perform actions at the same time. (It also works for separating data from computation into separate UTXOs which cuts tx fees down, as was displayed in this example)
 
 
-Outsourced Computation Protocol
+Outsourced Computation Protocols
 ---
 Outsourced computation protocols are similar to parallelized protocols however they keep the core state in a single UTXO with an unchanging phase/stage. Instead of splitting the state into 2 or more outputs in their own phases which then converge back together, outsourced computation protocols create “outsourced” UTXOs which run their own sub-protocols. Once the sub-protocols finish and reach their end-state, then the resulting data goes through the exit path back to the core UTXO and thus the main contract state is updated.
 
