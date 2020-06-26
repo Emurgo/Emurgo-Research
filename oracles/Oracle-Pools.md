@@ -223,8 +223,8 @@ With that as the base, they can be built out into a 3-tier datapoint hierarchy o
 
 Though this document outlined a number of options available when implementing oracle pools, evidently there is likely still quite a bit to be uncovered, especially when it comes to new incentive/disincentive mechanisms.
 
-This research, and the very first Oracle Pool implementation, are part of the recent [partnership between Ergo and Emurgo](https://emurgo.io/en/blog/emurgo-to-partner-with-ergo-and-build-blockchain-based-decentralized-financial-solutions). This partnership is leading the way to the first key discoveries in DeFi for all UTXO-based blockchains (Cardano, Ergo, etc).
+This research, and the very first Oracle Pool implementation, are part of the recent [partnership between Ergo and Emurgo](https://emurgo.io/blog/emurgo-to-partner-with-ergo-and-build-blockchain-based-decentralized-financial-solutions). This partnership is leading the way to the first key discoveries in DeFi for all UTXO-based blockchains (Cardano, Ergo, etc).
 
-The first oracle pool implementation will be deployed on the live [Ergo](ergoplatform.org/) mainnet, which is the first blockchain to support full fledged turing complete (across transactions) smart contracts in the extended UTXO model. Protocol specifications, contracts, and more info about the first implementation will be released publicly in the near future.
+The first oracle pool implementation will be deployed on the live [Ergo](https://ergoplatform.org/en/) mainnet, which is the first blockchain to support full fledged turing complete (across transactions) smart contracts in the extended UTXO model. Protocol specifications, contracts, and more info about the first implementation will be released publicly in the near future.
 
 With oracle pools being the first major step into the novel extended UTXO smart contract model, the future potential is already becoming hard to ignore. From uncovering unknown DeFi dApp design patterns to finding new solutions to old problems, it is clear that smart contracts are still a nascent technology with many new advancements just waiting to be discovered.
