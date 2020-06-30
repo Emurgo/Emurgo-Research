@@ -208,10 +208,41 @@ This also means that datapoint hierarchies of confidence can also have all of th
 
 As was mentioned briefly in passing, funding a hierarchy of confidence happens at the highest tier of the hierarchy. The funds then trickle down from tier to tier to actors/entities who acted properly by providing valid datapoints in a timely fashion.
 
-Datapoint hierarchies of confidence are an abstraction/model that can theoretically grow to an infinite number of tiers. This allows any implementation of a datapoint hierarchy of confidence to decide how much assurance is needed versus the cost/speed. In practical terms, it seems unlikely that any hierarchies will realistically be built past tier-3.
+Datapoint hierarchies of confidence are an abstraction/model that can theoretically grow to an infinite number of tiers. This allows any implementation of a datapoint hierarchy of confidence to decide how much assurance is needed versus the cost/speed.
 
-Oracle pools (tier 2 entities) seem to be the sweet spot where a lot of assurance is added compared to tier-1 datapoints, however without too much extra cost or lack of speed. As such, oracle pools were selected to be the primary target of this research piece, while still providing a description of datapoint hierarchies of confidence in order to allow future potential to grow out of it in case valid use cases come about.
 
+
+First-To-Post Oracle Pools & Signed Datapoints
+---
+Well known and trusted companies such as Coinbase have begun providing signed price feeds for anyone to use via a public API. These price feeds are to be consumed by oracles and posted onto a given blockchain. These signed datapoints provide a higher level of assurance, as the cryptographic signature prevents bad actors from editing the data.
+
+In short, an oracle pool can embed a first-to-post scheme reward scheme, where the first oracle who is part of said pool which posts the expected signed datapoint for the epoch gets rewarded. This is in contrast to typical oracle pools because in this case the assurance of the data is guaranteed by the signature, not by consensus.
+
+Therefore a "Coinbase BTC/USD" first-to-post oracle pool can be created, which only rewards one oracle per epoch. This provides us with timely oracle data at a lower cost than typical oracle pool data (due to only paying out one oracle) and with higher assurance of the datapoint (as it cannot be tampered with).
+
+#### First-To-Post Datapoint Hierarchies
+
+With the UTXO model, we can build off of this and construct datapoint hierarchies of confidence out of multiple first-to-post oracle pools. This provides us with the benefit of generating higher tier datapoints with even stronger guarantees than usual.
+
+Several first-to-post oracle pools are created, each for a unique signed datapoint. These pools all source the same datapoint (ie. BTC/USD) but from different sources/providers. They all have the same epoch length, and as such, all source data within the same time frame.
+
+These first-to-post oracle pools are also part of a tier-3 "pool of pools" which accumulates their individual datapoints into an averaged out datapoint. As mentioned in the prior section, all funds from users are deposited into the tier-3 entity, which then distributes the funds to the tier-2 first-to-post oracle pools.
+
+This provides an easy way for funding of all first-to-post oracle pools, while also outputting a clear finalized datapoint for users to consume on the blockchain. However, we can take one step further and now generate tier-4 datapoints in a practical manner.
+
+By utilizing both signed datapoints from first-to-post pools as well as collected datapoints from classic oracle pools, a tier-4 hierarchy can be constructed with practical applicability. This produces a finalized tier-4 datapoint from each of the tier-3 "pool of pools" datapoints(signed & collected) and thus gives even greater assurance from a wider number of sources.
+
+This tier-4 hierarchy built off of both types of oracle pools can be especially useful when a sufficient number of signed datapoints are not available from trusted sources. As such, relying on whatever trusted sources are available while still acquiring unsigned collected datapoints to fill in the gap provides a comfortable middle-ground that takes the best of both worlds.
+
+#### Dynamic Entry
+
+One of the great benefits of signed datapoints, is that they require no trust and thus no consensus between multiple oracles. What this means is that dynamic entry of oracles into a first-to-post oracle pool is trivial to implement.
+
+Any oracle, no matter how well known or unknown they may be, can join a pool and be paid for doing their job. All they have to do is manage being the first to post the datapoint on-chain. This often equates to having a good internet connection plus submitting the highest fee in order for their tx to be accepted first.
+
+As such, first-to-post oracle pools incentivize oracles to spend more on fees, thereby increasing the speed at which their datapoints are accepted onto the chain even when congestion theoretically becomes an issue. The incentives are aligned for both the oracles who wish to be paid out, and for the users who will eventually consume said oracle data after it gets accumulated upwards throughout the datapoint hierarchy.
+
+By utilizing both first-to-post oracle pools and collection oracle pools, a lot of assurance and flexibility is unlocked for all varieties of datapoints. 
 
 
 Conclusion
@@ -223,8 +254,8 @@ With that as the base, they can be built out into a 3-tier datapoint hierarchy o
 
 Though this document outlined a number of options available when implementing oracle pools, evidently there is likely still quite a bit to be uncovered, especially when it comes to new incentive/disincentive mechanisms.
 
-This research, and the very first Oracle Pool implementation, are part of the recent [partnership between Ergo and Emurgo](https://emurgo.io/blog/emurgo-to-partner-with-ergo-and-build-blockchain-based-decentralized-financial-solutions). This partnership is leading the way to the first key discoveries in DeFi for all UTXO-based blockchains (Cardano, Ergo, etc).
+This research, and the very first Oracle Pool implementation, are part of the recent [partnership between Ergo and Emurgo](https://emurgo.io/en/blog/emurgo-to-partner-with-ergo-and-build-blockchain-based-decentralized-financial-solutions). This partnership is leading the way to the first key discoveries in DeFi for all UTXO-based blockchains (Cardano, Ergo, etc).
 
-The first oracle pool implementation will be deployed on the live [Ergo](https://ergoplatform.org/en/) mainnet, which is the first blockchain to support full fledged turing complete (across transactions) smart contracts in the extended UTXO model. Protocol specifications, contracts, and more info about the first implementation will be released publicly in the near future.
+The first oracle pool implementation will be deployed on the live [Ergo](ergoplatform.org/) mainnet, which is the first blockchain to support full fledged turing complete (across transactions) smart contracts in the extended UTXO model. Protocol specifications, contracts, and more info about the first implementation will be released publicly in the near future.
 
 With oracle pools being the first major step into the novel extended UTXO smart contract model, the future potential is already becoming hard to ignore. From uncovering unknown DeFi dApp design patterns to finding new solutions to old problems, it is clear that smart contracts are still a nascent technology with many new advancements just waiting to be discovered.
