@@ -1,5 +1,5 @@
 # Governance Stake Slashing Oracle Pool Spec
-This is an informal specification which defines an oracle pool implementation which allows entry by predefined/whitelisted oracles. It includes stake slashing as well as governance for changing the pool posting price.
+This is an informal specification which defines an oracle pool implementation which allows entry by predefined/whitelisted trusted oracles. It includes stake slashing as well as governance for changing the pool posting price. 
 
 This spec follows [Ergo Improvement Proposal 6: Informal Smart Contract Protocol Specification Format](https://github.com/ergoplatform/eips/blob/master/eip-0006.md).
 
@@ -453,6 +453,7 @@ If the finish block height of an epoch has passed without the live epoch being s
 4. R5 of both the input and output are equivalent.
 5. The oracle pool NFT and all held Ergs from the input are in the output.
 6. Output R7 is equal to input R9. (Preserving the posting price.)
+7. R6 of the output must hold the address/ErgoTree of the input.
 ---
 
 
@@ -495,4 +496,5 @@ Here in [Create New Epoch](<#Action-Create-New-Epoch>) we set the next Live Epoc
 4. R4 of both the input and output are equivalent.
 5. R5 of the output must be within the valid range described within the preamble.
 6. Output R7 is equal to input R9. (Preserving the posting price.)
+7. R6 of the output must hold the address/ErgoTree of the input.
 ---
