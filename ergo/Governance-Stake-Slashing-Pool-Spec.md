@@ -1,4 +1,12 @@
 # Governance Stake Slashing Oracle Pool Spec
+
+- Author: Robert Kornacki
+- Released: July 23 2020
+- Topics: Oracles, DeFi, Smart Contracts, dApp, UTXOs, State Machines
+
+Introduction
+---
+
 This is an informal specification which defines an oracle pool implementation which allows entry by predefined/whitelisted trusted oracles. It includes stake slashing as well as governance for changing the pool posting price.
 
 This spec follows [Ergo Improvement Proposal 6: Informal Smart Contract Protocol Specification Format](https://github.com/ergoplatform/eips/blob/master/eip-0006.md).
