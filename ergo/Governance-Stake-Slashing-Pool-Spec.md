@@ -1,5 +1,5 @@
 # Governance Stake Slashing Oracle Pool Spec
-This is an informal specification which defines an oracle pool implementation which allows entry by predefined/whitelisted trusted oracles. It includes stake slashing as well as governance for changing the pool posting price. 
+This is an informal specification which defines an oracle pool implementation which allows entry by predefined/whitelisted trusted oracles. It includes stake slashing as well as governance for changing the pool posting price.
 
 This spec follows [Ergo Improvement Proposal 6: Informal Smart Contract Protocol Specification Format](https://github.com/ergoplatform/eips/blob/master/eip-0006.md).
 
@@ -75,7 +75,7 @@ This stage signifies that the oracle pool is currently in an active/live epoch.
 
 While the oracle pool box is in this stage oracles are allowed to post new datapoints via [Commit Datapoint](<#Action-Commit-Datapoint>). At the end of the epoch all of said datapoints can be collected via [Collect Datapoints](<#Action-Collect-Datapoints>).
 
-The oracle pool box at this stage must also hold the pool's NFT/singleton token. This NFT is required in order to guarantee the identity of the pool thereby differentiating it from another instance of the same contract posted by an unknown bad actor.
+The oracle pool box at this stage must also hold the pool's NFT/singleton token. This NFT is required in order to guarantee the identity of the pool thereby differentiating it from another instance of the same contract posted by an unknown bad actor. [Read more about the NFT here.](<#Action-Bootstrap-Oracle>)
 
 ### Registers
 - R4: The latest finalized datapoint (from the previous epoch)
