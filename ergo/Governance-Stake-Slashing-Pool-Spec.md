@@ -44,7 +44,7 @@ Oracles must put up a predefined amount of collateral in order to participate. T
 
 There is also a *margin of error* which all oracles must be within in order to get rewarded for being accurate in the given epoch. If they are not accurate, the current scheme does not pay them out (rather than slashing which is a bit aggressive).
 
-Governance voting may happen every time an oracle commits a datapoint. They simply include the new posting price they are voting for in register R7 of their datapoint box. If 75% of all oracles vote for the exact same new posting price, then the posting price is officially updated.
+Governance voting may happen every time an oracle commits a datapoint. They simply include the new oracle payout price they are voting for in register R7 of their datapoint box. If 75% of all oracles vote for the exact same new payout price, then the posting price is officially updated.
 
 Submitting funds to the pool, oracles submitting datapoints, governance votes, and collateral slashing are all parallelized which allows for the pool to move through epochs smoothly.
 
@@ -89,7 +89,7 @@ The oracle pool box at this stage must also hold the pool's NFT/singleton token.
 - R4: The latest finalized datapoint (from the previous epoch)
 - R5: Block height that the current epoch will finish on
 - R6: Address of the "Epoch Preparation" stage contract.
-- R7: Posting price of the oracle pool.
+- R7: Oracle payout price.
 
 ### Hard-coded Values
 - Addresses of all trusted oracles (this is used for an extra safety measure to prevent others who aren't oracles from collecting)
@@ -118,7 +118,7 @@ During this epoch preparation period collateral slashing can be initiated and co
 If the oracle pool has insufficient funds and no [Pool Deposit](<#Stage-Pool-Deposit>) boxes are available to collect, the pool may skip an epoch due to it being underfunded.
 If an epoch is skipped then a new epoch (following a new posting schedule) must be created via [Create New Epoch](<#Action-Create-New-Epoch>). This is only possible once the pool box has had it's funds replenished and it can pay out oracle once more.
 
-The oracle pool box at this stage must also hold the pool's NFT/singleton token. This NFT is required in order to guarantee the identity of the pool thereby differentiating it from another instance of the same contract posted by an unknown bad actor.
+The oracle pool box at this stage must also hold the pool's NFT/singleton token. This NFT is required in order to guarantee the identity of the pool thereby differentiating it from another instance of the same contract posted by an unknown bad actor. [Read more about the NFT here.](<#Action-Bootstrap-Oracle>)
 
 ### Registers
 - R4: The latest finalized datapoint (from the previous epoch)
@@ -126,7 +126,7 @@ The oracle pool box at this stage must also hold the pool's NFT/singleton token.
 - R6: The address of the latest collector (oracle who submitted the previous [Collect Datapoints](<#Action-Collect-Datapoints>) action)
 - R7: A list of all of the oracles who had their datapoints collected in the last epoch
 - R8: The box id of the previous [Live Epoch](<#Stage-Live-Epoch>) box
-- R9: Posting price of the oracle pool.
+- R9: Oracle payout price.
 
 ### Hard-coded Values
 - Addresses of all trusted oracles (this is used for an extra safety measure to prevent others who aren't oracles from collecting)
@@ -157,7 +157,7 @@ This box also holds information about which epoch the datapoint was posted, so t
 - R4: The address of the oracle (never allowed to change after bootstrap).
 - R5: The box id of the latest [Live Epoch](<#Stage-Live-Epoch>) box.
 - R6: The oracle's datapoint.
-- R7: The oracle's vote for a new posting price. (Can be empty if not voting to change price)
+- R7: The oracle's vote for a new payout price. (Can be empty if not voting to change price)
 
 ### Actions/Spending Paths
 - [Commit Datapoint](<#Action-Commit-Datapoint>)
@@ -208,7 +208,7 @@ An [Epoch Preparation](<#Stage-Epoch-Preparation>) box with:
 - R6: A default placeholder address (has no effect in bootstrap)
 - R7: An empty list (has no effect in bootstrap)
 - R8: A default/placeholder block id (has no effect in bootstrap)
-- R9: The posting price of the oracle pool.
+- R9: The payout price (in Ergs) that each oracle will receive on successful posting.
 ---
 
 
@@ -232,7 +232,9 @@ Once bootstrapped, the oracle must wait until the block height gets close enough
 A box in [Datapoint](<#Stage-Datapoint>) stage which:
 - Holds a single oracle pool token.
 - R4: The address of the oracle who will be a participant in the pool
-- R5: Placeholder box id value
+- R5: Placeholder box id value.
+- R6: Placeholder datapoint value.
+- R7: Placeholder/no vote value.
 ---
 
 
@@ -290,13 +292,8 @@ This is the function which produces the finalized datapoint by folding down the 
 ```haskell
 [Summed Total Of Oracle Input Datapoints] / [Number Of Oracle Input Datapoints]
 ```
-Using a more complex equation and/or filtering major outliers before averaging is a good idea and will be implemented in the future.
+Using a more complex equation and/or filtering major outliers before averaging is a good idea and will be implemented in the near future.
 
-###### Successful Oracle Epoch Payout Function
-This is the amount of Ergs which a successful oracle (one that has provided a datapoint within the margin of error) is awarded at the end of an epoch. The plus one is to pay out the collector an extra portion for performing the collection.
-```haskell
-[Oracle Pool Posting Price] / ([Num Successful Oracles] + 1)
-```
 
 ### Data-Inputs
 1. Every [Datapoint](<#Stage-Datapoint>) box which has a datapoint that is within the margin of error.
@@ -311,20 +308,20 @@ The [Epoch Preparation](<#Stage-Epoch-Preparation>) box with the new datapoint
 #### Output #2+
 Payment boxes which are holding Ergs that are sent to each oracle who successfully provided a datapoint within the margin of error, plus an extra payment box to the collector (meaning the collector can get 1 or 2 payment boxes depending if they provide accurate data).
 
-The equation for the amount of Ergs inside each payment box can be found in *Successful Oracle Epoch Payout Function* in the preamble.
+The amount of Ergs inside each payment box is equal to `[Oracle Payout Price]` which is held in R7 of the [Live Epoch](<#Stage-Live-Epoch>) box.
 
 ### Action Conditions
 1. Collecting datapoints can only be performed by one of the hard-coded oracles.
 2. Output #1 has the oracle pool NFT.
-3. Output #1 has Ergs equivalent to: `[Input #1 Ergs] - [Hardcoded Pool Payout]`
+3. Output #1 has Ergs equivalent to: `[Input #1 Ergs] - [Pool Payout]`
 4. Output #1 R4 is the result of the `Finalize Datapoint Function`
-5. Output #1 R5 is equal to: `[Input #1 R5] + [Hardcoded Epoch Length]`
-6. Output #1 R6 holds the address of the collector (who earns the extra payout)
+5. Output #1 R5 is equal to: `[Input #1 R5] + [Epoch Prep Length] + [Live Epoch Length]`
+6. Output #1 R6 holds the address of the collector (who earns the extra payout).
 7. Output #1 R7 is a list comprised of the addresses of all of the successful oracles who provided a datapoint within the hardcoded margin of error (compared to finalized datapoint in R4 of Output #1). The addresses are acquired from the data-input [Datapoint](<#Stage-Datapoint>) box's R4.
 8. Output #1 R8 is the box id of Input #1.
 9. A payment box output is generated for every single oracle who's address is in the list in Output #1 R7.
 9. A (potentially second) payment box output is generated for the collector who's address is in R6 of Output #1.
-10. Each payment box has a total amount of Ergs inside equal to the result of the `Successful Oracle Epoch Payout Function`.
+10. Each payment box has a total amount of Ergs inside equal to the `[Oracle Payout Price]` held in R7 of the Input.
 11. Each data-input [Datapoint](<#Stage-Datapoint>) box has an R5 that is equal to Input #1 box id.
 12. If 75%+ of all oracle [Datapoint](<#Stage-Datapoint>) boxes have the same value in R7, then said value is placed in R9 of Output #1. Else the R7 from Input #1 is used.
 13. At least 1 valid data-input box is provided.
@@ -437,7 +434,7 @@ If a pool is ever underfunded, then this action must be performed to increase th
 After the previous epoch has ended via [Collect Datapoints](<#Action-Collect-Datapoints>) the oracle pool box *must* stay in the [Epoch Preparation](<#Stage-Epoch-Preparation>) stage until the blockchain height has passed the following:
 
 ```haskell
-[Finish Block Height Of Upcoming Epoch (R5)] - [Live Epoch Duration] + [Epoch Preparation Duration]
+[Finish Block Height Of Upcoming Epoch (R5)] - [Live Epoch Duration]
 ```
 
 This provides a preparation period where [Start Next Epoch](<#Action-Start-Next-Epoch>) cannot be used. Thus the next Live Epoch cannot officially start and datapoints cannot be updated. The oracles can use this period to collect funds into the pool and additionally slash collateral from bad acting oracles from the previous epoch.
@@ -455,7 +452,7 @@ If the finish block height of an epoch has passed without the live epoch being s
 
 
 ### Action Conditions
-1. The current block height is greater than  `[Finish Block Height Of Upcoming Epoch (R5)] - [Live Epoch Duration] + [Epoch Preparation Duration]`.
+1. The current block height is greater than  `[Finish Block Height Of Upcoming Epoch (R5)] - [Live Epoch Duration]`.
 2. The input box has more Ergs than the cost for one oracle pool posting payout.
 3. R4 of both the input and output are equivalent.
 4. R5 of both the input and output are equivalent.
