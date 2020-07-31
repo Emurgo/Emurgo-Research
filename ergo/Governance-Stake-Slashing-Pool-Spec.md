@@ -88,7 +88,7 @@ The oracle pool box at this stage must also hold the pool's NFT/singleton token.
 ### Registers
 - R4: The latest finalized datapoint (from the previous epoch)
 - R5: Block height that the current epoch will finish on
-- R6: Address of the "Epoch Preparation" stage contract.
+- R6: Blake2b256 Hash of the "Epoch Preparation" stage contract(ErgoTree).
 - R7: Oracle payout price.
 
 ### Hard-coded Values
@@ -325,7 +325,7 @@ The amount of Ergs inside each payment box is equal to `[Oracle Payout Price]` w
 11. Each data-input [Datapoint](<#Stage-Datapoint>) box has an R5 that is equal to Input #1 box id.
 12. If 75%+ of all oracle [Datapoint](<#Stage-Datapoint>) boxes have the same value in R7, then said value is placed in R9 of Output #1. Else the R7 from Input #1 is used.
 13. At least 1 valid data-input box is provided.
-14. Output #1 address is equal to the address held in R6 of Input #1.
+14. The blake2b256 hash of Output #1's address is equal to the hash held in R6 of Input #1.
 15. Every data-input [Datapoint](<#Stage-Datapoint>) box has a datapoint within the margin of error.
 ---
 
