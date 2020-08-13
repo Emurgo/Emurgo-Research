@@ -42,7 +42,6 @@ Oracles must put up a predefined amount of collateral in order to participate. T
 1. Failing to post a datapoint in the latest epoch
 2. Failing to include all other oracle datapoint boxes as a collector
 
-There is also a *margin of error* which all oracles must be within in order to get rewarded for being accurate in the given epoch. If they are not accurate, the current scheme does not pay them out (rather than slashing which is a bit aggressive).
 There is a *margin of error* which all oracles must be within in order to get rewarded for being accurate in the given epoch. They must be plus or minus the margin of error compared to the previous finalized datapoint. If they are not accurate, the current scheme does not pay them out (rather than slashing which is a bit aggressive).
 
 Governance voting may happen every time an oracle commits a datapoint. They simply include the new oracle payout price they are voting for in register R7 of their datapoint box. If 75% of all oracles vote for the exact same new payout price, then the posting price is officially updated.
