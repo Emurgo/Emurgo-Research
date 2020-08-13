@@ -43,6 +43,7 @@ Oracles must put up a predefined amount of collateral in order to participate. T
 2. Failing to include all other oracle datapoint boxes as a collector
 
 There is also a *margin of error* which all oracles must be within in order to get rewarded for being accurate in the given epoch. If they are not accurate, the current scheme does not pay them out (rather than slashing which is a bit aggressive).
+There is a *margin of error* which all oracles must be within in order to get rewarded for being accurate in the given epoch. They must be plus or minus the margin of error compared to the previous finalized datapoint. If they are not accurate, the current scheme does not pay them out (rather than slashing which is a bit aggressive).
 
 Governance voting may happen every time an oracle commits a datapoint. They simply include the new oracle payout price they are voting for in register R7 of their datapoint box. If 75% of all oracles vote for the exact same new payout price, then the posting price is officially updated.
 
@@ -278,7 +279,7 @@ Allows an oracle to use all of the individual oracle [Datapoint](<#Stage-Datapoi
 
 This action can only be initiated if the current height is greater than the block height in R5 of the existing [Live Epoch](<#Stage-Live-Epoch>) box (which represents the end height of the epoch). Due to all oracles being incentivized to collect via double payout, it is expected that at least one oracle will post the collection tx at the exact height of the new epoch, thereby generating the new [Epoch Preparation](<#Stage-Epoch-Preparation>) box.
 
-An oracle is rewarded for the epoch if they posted a datapoint that is within the margin of error (which is a % hardcoded in the [Live Epoch](<#Stage-Live-Epoch>) contract) of the finalized datapoint.
+An oracle is rewarded for the epoch if they posted a datapoint that is within the margin of error compared to the previous finalized datapoint (which is a % hardcoded in the [Live Epoch](<#Stage-Live-Epoch>) contract) of the finalized datapoint.
 
 Only datapoints commit during the latest epoch (checked by comparing R5 of data-inputs with the input [Live Epoch](<#Stage-Live-Epoch>) box) and which are within the margin of error are allowed to be collected.
 
@@ -315,7 +316,7 @@ The amount of Ergs inside each payment box is equal to `[Oracle Payout Price]` w
 4. Output #1 R4 is the result of the `Finalize Datapoint Function`
 5. Output #1 R5 is equal to: `[Input #1 R5] + [Epoch Prep Length] + [Live Epoch Length]`
 6. Output #1 R6 holds the address of the collector (who earns the extra payout).
-7. Output #1 R7 is a list comprised of the addresses of all of the successful oracles who provided a datapoint within the hardcoded margin of error (compared to finalized datapoint in R4 of Output #1). The addresses are acquired from the data-input [Datapoint](<#Stage-Datapoint>) box's R4.
+7. Output #1 R7 is a list comprised of the addresses of all of the successful oracles who provided a datapoint within the hardcoded margin of error (compared to finalized datapoint in R4 of Input #1). The addresses are acquired from the data-input [Datapoint](<#Stage-Datapoint>) box's R4.
 8. Output #1 R8 is the box id of Input #1.
 9. A payment box output is generated for every single oracle who's address is in the list in Output #1 R7.
 9. A (potentially second) payment box output is generated for the collector who's address is in R6 of Output #1.
