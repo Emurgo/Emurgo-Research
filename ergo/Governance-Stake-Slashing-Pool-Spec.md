@@ -42,7 +42,7 @@ Oracles must put up a predefined amount of collateral in order to participate. T
 1. Failing to post a datapoint in the latest epoch
 2. Failing to include all other oracle datapoint boxes as a collector
 
-There is a *margin of error* which all oracles must be within in order to get rewarded for being accurate in the given epoch. They must be plus or minus the margin of error compared to the previous finalized datapoint. If they are not accurate, the current scheme does not pay them out (rather than slashing which is a bit aggressive).
+There is an *outlier range* which all oracles must be within in order to get rewarded for providing data in the given epoch. This current scheme does not pay them out if they are not within this outlier range (rather than slashing which is a bit aggressive).
 
 Governance voting may happen every time an oracle commits a datapoint. They simply include the new oracle payout price they are voting for in register R7 of their datapoint box. If 75% of all oracles vote for the exact same new payout price, then the posting price is officially updated.
 
@@ -94,7 +94,7 @@ The oracle pool box at this stage must also hold the pool's NFT/singleton token.
 ### Hard-coded Values
 - Live epoch duration
 - Epoch preparation duration
-- Margin of error(%) that oracles are allowed to be off by.
+- Outlier range(%) that oracles are allowed to deviate by.
 - Minimum collateral an oracle is required to put up
 - The oracle pool NFT/singleton token id
 
@@ -278,9 +278,9 @@ Allows an oracle to use all of the individual oracle [Datapoint](<#Stage-Datapoi
 
 This action can only be initiated if the current height is greater than the block height in R5 of the existing [Live Epoch](<#Stage-Live-Epoch>) box (which represents the end height of the epoch). Due to all oracles being incentivized to collect via double payout, it is expected that at least one oracle will post the collection tx at the exact height of the new epoch, thereby generating the new [Epoch Preparation](<#Stage-Epoch-Preparation>) box.
 
-An oracle is rewarded for the epoch if they posted a datapoint that is within the margin of error compared to the previous finalized datapoint (which is a % hardcoded in the [Live Epoch](<#Stage-Live-Epoch>) contract) of the finalized datapoint.
+An oracle is rewarded for the epoch if they posted a datapoint that is within the outlier range compared to the previous finalized datapoint (which is a % hardcoded in the [Live Epoch](<#Stage-Live-Epoch>) contract) of the finalized datapoint.
 
-Only datapoints commit during the latest epoch (checked by comparing R5 of data-inputs with the input [Live Epoch](<#Stage-Live-Epoch>) box) and which are within the margin of error are allowed to be collected.
+Only datapoints commit during the latest epoch (checked by comparing R5 of data-inputs with the input [Live Epoch](<#Stage-Live-Epoch>) box) and which are within the outlier range are allowed to be collected.
 
 Lastly if 75% of oracles submit a "vote" to change the oracle pool posting price (by placing an integer value in R7 of their [Datapoint](<#Stage-Datapoint>) box) then the pool posting price in R9 of the [Epoch Preparation](<#Stage-Epoch-Preparation>) output box will be updated.
 
@@ -290,11 +290,10 @@ This is the function which produces the finalized datapoint by folding down the 
 ```haskell
 [Summed Total Of Oracle Input Datapoints] / [Number Of Oracle Input Datapoints]
 ```
-Using a more complex equation and/or filtering major outliers before averaging is a good idea and will be implemented in the near future.
 
 
 ### Data-Inputs
-1. Every [Datapoint](<#Stage-Datapoint>) box which has a datapoint that is within the margin of error.
+1. Every [Datapoint](<#Stage-Datapoint>) box which has a datapoint that is within the outlier range.
 
 ### Inputs
 1. The [Live Epoch](<#Stage-Live-Epoch>) box.
@@ -304,7 +303,7 @@ Using a more complex equation and/or filtering major outliers before averaging i
 The [Epoch Preparation](<#Stage-Epoch-Preparation>) box with the new datapoint
 
 #### Output #2+
-Payment boxes which are holding Ergs that are sent to each oracle who successfully provided a datapoint within the margin of error, plus an extra payment box to the collector (meaning the collector can get 1 or 2 payment boxes depending if they provide accurate data).
+Payment boxes which are holding Ergs that are sent to each oracle who successfully provided a datapoint within the outlier range, plus an extra payment box to the collector (meaning the collector can get 1 or 2 payment boxes depending if they provide accurate data).
 
 The amount of Ergs inside each payment box is equal to `[Oracle Payout Price]` which is held in R7 of the [Live Epoch](<#Stage-Live-Epoch>) box.
 
@@ -315,7 +314,7 @@ The amount of Ergs inside each payment box is equal to `[Oracle Payout Price]` w
 4. Output #1 R4 is the result of the `Finalize Datapoint Function`
 5. Output #1 R5 is equal to: `[Input #1 R5] + [Epoch Prep Length] + [Live Epoch Length]`
 6. Output #1 R6 holds the address of the collector (who earns the extra payout).
-7. Output #1 R7 is a list comprised of the addresses of all of the successful oracles who provided a datapoint within the hardcoded margin of error (compared to finalized datapoint in R4 of Input #1). The addresses are acquired from the data-input [Datapoint](<#Stage-Datapoint>) box's R4.
+7. Output #1 R7 is a list comprised of the addresses of all of the successful oracles who provided a datapoint within the hardcoded outlier range (compared to finalized datapoint in R4 of Input #1). The addresses are acquired from the data-input [Datapoint](<#Stage-Datapoint>) box's R4.
 8. Output #1 R8 is the box id of Input #1.
 9. A payment box output is generated for every single oracle who's address is in the list in Output #1 R7.
 9. A (potentially second) payment box output is generated for the collector who's address is in R6 of Output #1.
@@ -324,7 +323,7 @@ The amount of Ergs inside each payment box is equal to `[Oracle Payout Price]` w
 12. If 75%+ of all oracle [Datapoint](<#Stage-Datapoint>) boxes have the same value in R7, then said value is placed in R9 of Output #1. Else the R7 from Input #1 is used.
 13. At least 1 valid data-input box is provided.
 14. The blake2b256 hash of Output #1's address is equal to the hash held in R6 of Input #1.
-15. Every data-input [Datapoint](<#Stage-Datapoint>) box has a datapoint within the margin of error.
+15. Every data-input [Datapoint](<#Stage-Datapoint>) box has a datapoint within the outlier range.
 ---
 
 
