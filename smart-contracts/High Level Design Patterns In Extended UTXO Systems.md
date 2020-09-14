@@ -13,7 +13,7 @@ Given that smart contract powered UTXO systems are nascent, there is a distinct 
 
 That said, UTXO-based smart contract protocols have a direct correlation with State Machines. Basic protocols rely on a simple state machine which transitions from state to state across transactions with only a single UTXO carrying the data/coins. More complex protocols however are made of more than a single state machine with certain state transitions requiring two or more state machines to converge. During this convergence the data/tokens within the current state of each state machine is used as input in order to transition both forward. These convergence-based transitions may result in full convergence where they join into a single state machine, or partial convergence where they only use each other as inputs and still continue separately parallelized. 
 
-Furthermore in this new extended UTXO-model of smart contracts, it is possible for a state transition to generate a whole new and parallelized state machine that will function on it's own. This can happen during a convergence of state machines or merely in running of a single one. This new facet is where much of the novel complexity originates from.
+Furthermore in this new extended UTXO-model of smart contracts, it is possible for a state transition to generate a whole new and parallelized state machine that will function on its own. This can happen during a convergence of state machines or merely in running of a single one. This new facet is where much of the novel complexity originates from.
 
 This document summarizes several UTXO-based smart contract design patterns at the highest level, thereby abstracting out any blockchain-specific details. Any smart contract powered extended UTXO system which provides the ability to read the coins, data, and the address (contract/contract hash) of both inputs and outputs should be able to use all of the following design patterns. These patterns start out relying on a single state machine, and progress into the realm of multi-state machine protocols with convergence and new state machine generation.
 
@@ -89,7 +89,7 @@ Branching protocols can be useful when the decisions of actors taking part in th
 
 Parallelized Protocols
 ---
-As we saw in the previous section, branching acts as an OR path, meaning that only one output UTXO from the spending transaction is created. In contrast, parallelized protocols act as an AND path where 2 or more output UTXOs are generated each in it's own stage/phase. These parallelized UTXOs can then converge back together once they have performed all of the required computations for a new consolidated state of the protocol.
+As we saw in the previous section, branching acts as an OR path, meaning that only one output UTXO from the spending transaction is created. In contrast, parallelized protocols act as an AND path where 2 or more output UTXOs are generated each in its own stage/phase. These parallelized UTXOs can then converge back together once they have performed all of the required computations for a new consolidated state of the protocol.
 
 This allows for multiple actors to perform actions in the same instance of a protocol in the same block, thereby increasing the “throughput” of the specific protocol (not the blockchain itself). This also makes txs cheaper for each party if the state was split between the parallelized UTXOs as tx size will be smaller.
 

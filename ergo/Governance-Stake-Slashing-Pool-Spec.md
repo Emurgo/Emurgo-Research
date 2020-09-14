@@ -115,7 +115,7 @@ Progression into the proceeding epoch from this stage (and thus into the [Live E
 During this epoch preparation period collateral slashing can be initiated and collecting [Pool Deposit](<#Stage-Pool-Deposit>) boxes can be done. This provides a period of establishing equilibrium after every datapoint collection for both the individual oracles who may have been wronged, and for the funds of the oracle pool to be collected in order to allow for the protocol to continue.
 
 If the oracle pool has insufficient funds and no [Pool Deposit](<#Stage-Pool-Deposit>) boxes are available to collect, the pool may skip an epoch due to it being underfunded.
-If an epoch is skipped then a new epoch (following a new posting schedule) must be created via [Create New Epoch](<#Action-Create-New-Epoch>). This is only possible once the pool box has had it's funds replenished and it can pay out oracle once more.
+If an epoch is skipped then a new epoch (following a new posting schedule) must be created via [Create New Epoch](<#Action-Create-New-Epoch>). This is only possible once the pool box has had its funds replenished and it can pay out oracle once more.
 
 The oracle pool box at this stage must also hold the pool's NFT/singleton token. This NFT is required in order to guarantee the identity of the pool thereby differentiating it from another instance of the same contract posted by an unknown bad actor. [Read more about the NFT here.](<#Action-Bootstrap-Oracle>)
 
@@ -246,7 +246,7 @@ In order to commit a datapoint, the output [Datapoint](<#Stage-Datapoint>) box m
 
 If an oracle never had their collateral slashed, then their previously held collateral is sufficient and therefore they do not need to provide extra input boxes holding Ergs.
 
-When a new datapoint is commit, the [Live Epoch](<#Stage-Live-Epoch>) must be used as a data-input in order to acquire it's box id. This box id is then put in R5 of the new [Datapoint](<#Stage-Datapoint>) output, thereby ensuring that the datapoint was posted in the current epoch.
+When a new datapoint is commit, the [Live Epoch](<#Stage-Live-Epoch>) must be used as a data-input in order to acquire its box id. This box id is then put in R5 of the new [Datapoint](<#Stage-Datapoint>) output, thereby ensuring that the datapoint was posted in the current epoch.
 
 An oracle can also include a "vote" for a new oracle pool price by placing an integer in R7.
 
@@ -422,7 +422,7 @@ If a pool is ever underfunded, then this action must be performed to increase th
 1. Input #1 holds the oracle pool NFT (the NFT id is hardcoded in the [Pool Deposit](<#Stage-Pool-Deposit>) contract)
 2. Output #1 holds the oracle pool NFT.
 3. Output #1 has exactly the same registers as Input #1.
-4. Output #1 holds equivilant to it's previous total plus the summed value of all input [Pool Deposit](<#Stage-Pool-Deposit>) boxes.
+4. Output #1 holds equivilant to its previous total plus the summed value of all input [Pool Deposit](<#Stage-Pool-Deposit>) boxes.
 ---
 
 
@@ -464,7 +464,7 @@ If the finish block height of an epoch has passed without the live epoch being s
 
 ## Action: Create New Epoch
 
-If the oracle pool is in the [Epoch Preparation](<#Stage-Epoch-Preparation>) stage and is underfunded, it can miss starting it's next Live Epoch (because [Start Next Epoch](<#Action-Start-Next-Epoch>) requires sufficient funds).
+If the oracle pool is in the [Epoch Preparation](<#Stage-Epoch-Preparation>) stage and is underfunded, it can miss starting its next Live Epoch (because [Start Next Epoch](<#Action-Start-Next-Epoch>) requires sufficient funds).
 
 Therefore, this action allows creating a brand new upcoming epoch after funds have been collected and a previous epoch has been missed. This is done by checking R5 of the [Epoch Preparation](<#Stage-Epoch-Preparation>) box and seeing if the block height has passed. If so, it means that none of the oracles started said epoch (which they have a game theoretic incentive to do so because they get paid) due to the pool not having sufficient funds to payout the oracles for the next epoch.
 

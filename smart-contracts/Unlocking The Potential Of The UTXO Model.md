@@ -43,9 +43,9 @@ When a UTXO at `smart contract address Y` is used as an input in a transaction, 
 
 The smart contract reads the above listed data as input and if it executes to the equivalent of `True`, then the transaction is valid and passes. This is the core workflow which UTXO-based smart contracts use.
 
-What this means is that every time you wish to update data held by a dApp (inside of a UTXO), you must spend the original UTXO (thereby destroying it) and create a new UTXO at the same address & holding the same assets. This new UTXO however has a new value in it's data, thereby causing a state transition to happen from the old data value(s) to the new data value(s).
+What this means is that every time you wish to update data held by a dApp (inside of a UTXO), you must spend the original UTXO (thereby destroying it) and create a new UTXO at the same address & holding the same assets. This new UTXO however has a new value in its data, thereby causing a state transition to happen from the old data value(s) to the new data value(s).
 
-Each UTXO holds it's own personal state in the data it has attached to it. As the data and assets move from one UTXO to another, they pass through state transitions which can cause them to split, accumulate, be deleted, or be used with other assets/data from other UTXOs. These higher-order actions allow for more complex logic to be encoded with potential for multiple input UTXOs and multiple output UTXOs. This ends up being one of the key basic building blocks for developing dApps.
+Each UTXO holds its own personal state in the data it has attached to it. As the data and assets move from one UTXO to another, they pass through state transitions which can cause them to split, accumulate, be deleted, or be used with other assets/data from other UTXOs. These higher-order actions allow for more complex logic to be encoded with potential for multiple input UTXOs and multiple output UTXOs. This ends up being one of the key basic building blocks for developing dApps.
 
 
 
@@ -55,7 +55,7 @@ As we have seen, spending UTXOs is at the core of the extended UTXO smart contra
 
 The astute reader may have already noticed that since we have state(data) attached individually to each UTXO, every time a state transition happens the result is reflected in said data. As such the data often is "preprocessed", wherein it already exists and contains information that could be useful for other dApps/contracts to reference without any further execution required.
 
-An example of useful information that could be used by other smart contracts would be oracle data. Using such data held in a UTXO in a naive manner would entail spending the UTXO. By using the UTXO (that has oracle data) as an input you are spending it and thereby providing access to it's data to your other transaction inputs. This is how your dApp can attain access to data held under UTXOs locked under other smart contracts.
+An example of useful information that could be used by other smart contracts would be oracle data. Using such data held in a UTXO in a naive manner would entail spending the UTXO. By using the UTXO (that has oracle data) as an input you are spending it and thereby providing access to its data to your other transaction inputs. This is how your dApp can attain access to data held under UTXOs locked under other smart contracts.
 
 That said, having to spend every single UTXO which you wish to read data from has a number of strong drawbacks:
 - The smart contract of the UTXO with the data must execute, thereby increasing computation complexity/cost.
