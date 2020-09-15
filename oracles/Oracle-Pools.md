@@ -107,7 +107,7 @@ Oracle Pools As Core Infrastructure
 ---
 One of the great things about oracle pools on top of extended UTXO systems (which support data-inputs) is that everyone on the network can benefit from utilizing the same oracle pool for a given datapoint. 
 
-Rather than each dApp creating it's own price feed made of custom oracles & accumulator contracts, the blockchain ecosystem can focus on creating large oracle pools which provide a highly accurate and trustworthy data source. Thanks to incentives being a key part of oracle pools (especially with collateral slashing), the larger the set of oracles which take part, the harder it is for a subset of the oracles to go rogue and try to disrupt the system.
+Rather than each dApp creating its own price feed made of custom oracles & accumulator contracts, the blockchain ecosystem can focus on creating large oracle pools which provide a highly accurate and trustworthy data source. Thanks to incentives being a key part of oracle pools (especially with collateral slashing), the larger the set of oracles which take part, the harder it is for a subset of the oracles to go rogue and try to disrupt the system.
 
 Since oracle pool postings are on a schedule and provide publicly available data in a UTXO, this means that oracle pools act as a public good for all users on the network. Thus even tiny p2p dApps, which only involve 2 participants, still have the ability to utilize the oracle pool datapoints for free by using the pool UTXO as a data-input. This potentially has a waterfall effect in aiding the development of the dApp ecosystem as the barrier of entry for new developers shrinks. Oracle pool datafeeds can one day become commonplace and the equivalent of public/core infrastructure.
 
@@ -122,7 +122,7 @@ Stake slashing oracle pools by themselves provide a good balance of both incenti
 
 That said, one of the possible strategies that oracles can pursue in order to try to maximize earning in the short-term is to simply copy the datapoint of the first oracle who posts a datapoint. This guarantees that they will be within the margin of error and relinquishes the oracle of their duty of sourcing the data themselves. Thus this becomes a way to leech to the pool of funds while decreasing the accuracy and trustworthiness of the oracle pool data.
 
-Do note, this is not as major of an issue as it may seem at first. Oracle pools are open for the world to see, meaning it is reasonably trivial for other oracles, or external actors, to notice when an oracle always copies another oracle's datapoint and never posts first. This means market incentives can come into play such that the oracle pool may lose the trust of it's users, and thus with no userbase, the funds dry up.
+Do note, this is not as major of an issue as it may seem at first. Oracle pools are open for the world to see, meaning it is reasonably trivial for other oracles, or external actors, to notice when an oracle always copies another oracle's datapoint and never posts first. This means market incentives can come into play such that the oracle pool may lose the trust of its users, and thus with no userbase, the funds dry up.
 
 Furthermore, oracle pools with governance mechanisms in place can be responsive to these market dynamics. Oracles part of a pool wish to preserve their image as a trustworthy source of oracle data so that they can keep operations moving smoothly & thereby earning money. Oracles within a pool are incentivized to keep check that all other actors in the pool are indeed doing their job properly in sourcing their own data. This means that through governance means, a vote can be held to remove a specific oracle who is clearly malicious & not sourcing their own data.
 
@@ -135,7 +135,7 @@ For this goal, we have two approaches available. Either we completely prevent th
 #### Direct Prevention
 In this approach, an epoch is divided into two periods. A hash submission period, and a datapoint reveal period.
 
-All oracles are first required to submit a hash (with salt added) of their datapoint on-chain during the hash submission period. This period is a predefined number of blocks within an epoch, and no oracle is allowed to submit a datapoint without first submitting it's hash.
+All oracles are first required to submit a hash (with salt added) of their datapoint on-chain during the hash submission period. This period is a predefined number of blocks within an epoch, and no oracle is allowed to submit a datapoint without first submitting its hash.
 
 Once the oracle pool epoch moves into the datapoint reveal period, then oracles can reveal their datapoint by posting it on-chain to the pool (along with the salt used). The datapoint + salt must hash to the same result as the oracle posted in the hash submission period. Otherwise their datapoint is considered invalid and not accepted.
 
@@ -194,11 +194,11 @@ An oracle pool is technically a tier-2 datapoint hierarchy of confidence. That i
 
 Now, what if we were to build out a tier-3 datapoint hierarchy of confidence? If a tier-2 entity is a collection of oracles into a pool, then a tier-3 entity would be a collection of pools into a "pool of pools". Thus a tier-3 entity collects the datapoints of numerous pools which are all sourcing the same datapoint in order to then finalize them into a new high-assurance tier-3 datapoint.
 
-Thus we can now classify any oracle datapoint that is posted to a blockchain by it's hierarchy of confidence tier. If an oracle simply posts a datapoint by themselves, then that is a tier-1 datapoint. If an oracle pool (or some other scheme where a group of oracles average their datapoints together) produces a datapoint, then then that is considered a tier-2 datapoint. And of course, a pool of oracle pools produces a tier-3 datapoint.
+Thus we can now classify any oracle datapoint that is posted to a blockchain by its hierarchy of confidence tier. If an oracle simply posts a datapoint by themselves, then that is a tier-1 datapoint. If an oracle pool (or some other scheme where a group of oracles average their datapoints together) produces a datapoint, then then that is considered a tier-2 datapoint. And of course, a pool of oracle pools produces a tier-3 datapoint.
 
 With oracle pools used within the datapoint hierarchy of confidence, the higher tier that a datapoint is the higher level of assurance that can be expected from said datapoint. This is because at the core of oracle pools we have strong incentives/disincentives in place to keep oracles acting properly. This fact is magnified further with datapoint hierarchies of confidence. (Unfortunately current oracle schemes today typically have limited incentives/disincentive mechanisms, thus it is harder to build trustworthy hierarchies out of them)
 
-The very same carrots/sticks used by oracles pools to keep oracles in check can be used on the tier-3 level for the oracle pools themselves. As such, in a 3 tier datapoint hierarchy of confidence, an oracle pool does not acquire funds directly from it's users. Instead, it receives funds if it acted properly (and thus is required to put up stake). Thus, just like an individual oracle, the oracle pool must:
+The very same carrots/sticks used by oracles pools to keep oracles in check can be used on the tier-3 level for the oracle pools themselves. As such, in a 3 tier datapoint hierarchy of confidence, an oracle pool does not acquire funds directly from its users. Instead, it receives funds if it acted properly (and thus is required to put up stake). Thus, just like an individual oracle, the oracle pool must:
 - Provide a datapoint that is within a margin of error of the averaged out final datapoint (in order to be paid out)
 - Post the pool's finalized datapoint on time within the tier-3 entity's epoch (or get stake slashed)
 - The tier-3 datapoint collector must accurately collect all oracle pool datapoints submit in the current epoch (or get stake slashed)
