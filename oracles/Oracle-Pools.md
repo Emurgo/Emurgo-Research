@@ -37,7 +37,7 @@ Lastly, the oracle which collects all of the datapoints (dubbed the *collector*)
 
 Thus oracle pools provide a predictable and steady stream of oracle data which is averaged out from several oracles while providing an easy way to fund said service tied together with game theoretic incentives.
 
-This is the simplest conception of an oracle pool and in the following sections we will begin to explore how we can build off of this base to provide better assurance, flexibility, and further novel unexplored potential.
+This is the simplest conception of an oracle pool, and in the following sections we will begin to explore how we can build off of this base to provide better assurance, flexibility, and further novel unexplored potential.
 
 Note, a given oracle pool implementation must at least support the above basic design to be considered an oracle pool, however the following extensions to the core basic oracle pool protocol can be selectively chosen for a given use case.
 
@@ -72,7 +72,7 @@ The first type of governance available for oracle pools is parameter governance.
 
 Every parameter change requires an oracle to post the expected parameter value as a part of their vote. If a 75%+ majority vote for the same new parameter value, then it is accepted and set for the next new epoch.
 
-It is a good idea for oracles pool implementations to also restrict the amount by which a parameter can change. For example, limiting posting price changes to maximum 1% per epoch, and/or potentially setting hard maximum/minimum values.
+It is a good idea for oracle pool implementations to also restrict the amount by which a parameter can change. For example, limiting posting price changes to maximum 1% per epoch, and/or potentially setting hard maximum/minimum values.
 
 Thus the oracle pool can adapt overtime to the requirements needed of it through parameter voting. 
 
@@ -99,7 +99,7 @@ Typically the oracles are the group of actors who have voting rights in the gove
 
 This can be made possible by minting governance tokens for a given oracle pool together with the in-between epoch design pattern for voting. This therefore allows pools to be created where solely external actors are allowed to vote on changes, or pools where both oracles and external actors have the right to take part in governance.
 
-Each individual who votes must cast their vote by using their governance token, no matter if they are an oracle or a 3rd party. As long as they hold the governance token they have the right to create a UTXO with their vote (for changes to be made to the oracle pool). As such, once a sufficient number of votes are submit, they can be collected back into the core smart contract protocol and applied going into the next epoch.
+Each individual who votes must cast their vote by using their governance token, no matter if they are an oracle or a 3rd party. As long as they hold the governance token they have the right to create a UTXO with their vote (for changes to be made to the oracle pool). As such, once a sufficient number of votes are submitted, they can be collected back into the core smart contract protocol and applied going into the next epoch.
 
 
 
@@ -124,16 +124,16 @@ That said, one of the possible strategies that oracles can pursue in order to tr
 
 Do note, this is not as major of an issue as it may seem at first. Oracle pools are open for the world to see, meaning it is reasonably trivial for other oracles, or external actors, to notice when an oracle always copies another oracle's datapoint and never posts first. This means market incentives can come into play such that the oracle pool may lose the trust of its users, and thus with no userbase, the funds dry up.
 
-Furthermore, oracle pools with governance mechanisms in place can be responsive to these market dynamics. Oracles part of a pool wish to preserve their image as a trustworthy source of oracle data so that they can keep operations moving smoothly & thereby earning money. Oracles within a pool are incentivized to keep check that all other actors in the pool are indeed doing their job properly in sourcing their own data. This means that through governance means, a vote can be held to remove a specific oracle who is clearly malicious & not sourcing their own data.
+Furthermore, oracle pools with governance mechanisms in place can be responsive to these market dynamics. Oracles wish to preserve their image as a trustworthy source of oracle data so that they can keep operations moving smoothly & thereby earn money. Oracles within a pool are incentivized to keep check that all other actors in the pool are indeed doing their job properly in sourcing their own data. This means that through governance, a vote can be held to remove a specific oracle who is clearly malicious & not sourcing its own data.
 
 If they do not remove bad acting oracles, then it will be reasonably trivial for a competitor to utilize this public failure to create a new oracle pool and attract users to switch. Thus, even with basic governance alone, there are still enough checks and balances to make the protocol run smoothly in general over the long term.
 
 With all of that said, we can still explore into approaches that are possible which extend the basic oracle pool protocol by adding extra layers of protection against datapoint copying.
 
-For this goal, we have two approaches available. Either we completely prevent the ability for copying to take place, or we integrate schemes that force a random oracle part of a pool to submit data first in a given epoch.
+For this goal, we have two approaches available. Either we completely prevent the ability for copying to take place, or we integrate schemes that force a random oracle in the pool to submit data first in a given epoch.
 
 #### Direct Prevention
-In this approach, an epoch is divided into two periods. A hash submission period, and a datapoint reveal period.
+With direct copy prevention, an epoch is divided into two periods: a hash submission period and a datapoint reveal period.
 
 All oracles are first required to submit a hash (with salt added) of their datapoint on-chain during the hash submission period. This period is a predefined number of blocks within an epoch, and no oracle is allowed to submit a datapoint without first submitting its hash.
 
@@ -144,13 +144,14 @@ With stake slashing also implemented as part of said oracle pool protocol, then 
 - Fails to submit a hash (thus they cannot submit a datapoint)
 - Fails to reveal the datapoint & salt matching the initial hash they posted
 
-And lastly, since the oracle pool posting price is constant(not including governance-based changes) and is merely divided among the successful oracles in a given epoch, all oracles have a game theoretic incentive to not collude with others in sharing their datapoint off-chain. This would result in an oracle decreasing their personal earning for the given epoch.
+And lastly, since the oracle pool posting price is constant (not including governance-based changes) and is merely divided among the successful oracles in a given epoch, all oracles have a game theoretic incentive to not collude with others in sharing their datapoint off-chain. This would result in an oracle decreasing their personal earning for the given epoch.
+
+Direct prevention is a very strong way to prevent datapoint copying however it introduces added complexity to both the on-chain + off-chain logic while also making it harder to run oracle pools with a short posting period/epoch length (which makes it challenging to ensure oracles have enough time to post hashes & reveal datapoints). Because of this, using a mechanism such as leader checking is a valid alternative approach for ensuring oracles source their own data.
+
 
 
 #### Leader Checking
-Direct prevention is a very strong way to prevent datapoint copying however it introduces added complexity to both the on-chain + off-chain logic while also making it harder to run oracle pools with a short posting period/epoch length (which makes it challenging to ensure oracles have enough time to post hashes & reveal datapoints). Because of this, using a mechanism such as leader checking is a valid alternative approach for ensuring oracles source their own data.
-
-With leader checking, an epoch is divide into two periods:
+With the leader checking method of copy prevention, an epoch is divided into two periods:
 1. Leader posting period
 2. Participant posting period
 
@@ -172,19 +173,19 @@ That said, it could be also useful to enable dynamic entry into an oracle pool. 
 
 One potential way to do this would be for an oracle pool to have a success token. It is awarded to both existing approved oracles as well as prospecting oracles who are trying to join the oracle pool for acting properly. This success token represents the aptitude/ability for an oracle to provide timely data that is within the margin of error (say 0.5%) of the final averaged out datapoint which is posted by the pool. Therefore, any oracle that posts data that is an outlier is not rewarded with a success token.
 
-A prospecting oracle must post their datapoint into a UTXO of their own before any of the current approved oracles in the pool post their data on-chain. Once the oracle pool has accumulated all current approved oracles' data into a new UTXO, then a prospecting oracle can spend his datapoint UTXO he created together with the oracle pool UTXO in order to withdraw 1 pool success token (if his data point is within the margin of error of the pool datapoint).
+A prospecting oracle must post its datapoint into a UTXO of its own before any of the current approved oracles in the pool post their data on-chain. Once the oracle pool has accumulated all current approved oracles' data into a new UTXO, then a prospecting oracle can spend its datapoint UTXO he created together with the oracle pool UTXO in order to withdraw 1 pool success token (if its data point is within the margin of error of the pool datapoint).
 
 The oracle pool UTXO ensures that only prospecting oracles who actually sourced their own data (who posted their datapoint before the rest of the oracles) and provided a valid datapoint are allowed to redeem a success token. Thus this kind of scheme requires prospecting oracles to suffer an initial cost (in tx fees) together with a significant amount of time before they are on-boarded. This makes it much more costly for bad actors to attempt to join.
 
 Now that we have this concept of success tokens, we can begin to explore how these tokens can be utilized for entry. A pool can set custom requirements for what is required of a prospecting oracle to become part of the pool. This provides a lot of flexibility such as by requiring that approved oracles are anyone who has 1000 success tokens rather than being hardcoded into the contract. Therefore one could bootstrap a pool by giving 1000 success  tokens to each approved oracle in the beginning. Then the tokens are locked in the pool contract and are thenceforth open to be redeemed by prospecting oracles as well.
 
-Alternatively, the "approved oracles" in a pool could simply be whichever X number of oracles have the highest amount of success tokens. With such a scheme you have an initial trusted bootstrap, where all of the first oracles are whitelisted, but still leave it open to dynamic entry as well. Since the initial oracles earn success tokens at the same rate as prospecting oracles, as long as they perform their job properly, they will continue to be a member of the oracle pool. However if an oracle fails to do their job properly over a sufficient period of time, they will be out-competed by an aspiring oracles who will end up with more success tokens.
+Alternatively, the "approved oracles" in a pool could simply be whichever X number of oracles have the highest amount of success tokens. With such a scheme you have an initial trusted bootstrap, where all of the first oracles are whitelisted, but still leave it open to dynamic entry as well. Since the initial oracles earn success tokens at the same rate as prospecting oracles, as long as they perform their job properly, they will continue to be a member of the oracle pool. However if an oracle fails to do their job properly over a sufficient period of time, they will be out-competed by an aspiring oracle who will end up with more success tokens.
 
 
 
 Oracle Datapoint Hierarchies Of Confidence
 ---
-In the extended UTXO model, we have a lot of flexibility and power available to build new protocols. One of such novel possibilities is the ability to run sub-protocols concurrently and having the resulting data from each easily collected and used in a higher level protocol.
+In the extended UTXO model, we have a lot of flexibility and power available to build new protocols. One of such novel possibilities is the ability to run sub-protocols concurrently and have the resulting data from each easily collected and used in a higher level protocol.
 
 Within our current context this can be utilized to construct oracle datapoint hierarchies of confidence. In short, they are an abstraction above oracle pools which allows us to scale the benefits of oracle pools as much as we desire, at the cost of price and speed.
 
@@ -196,13 +197,13 @@ Now, what if we were to build out a tier-3 datapoint hierarchy of confidence? If
 
 Thus we can now classify any oracle datapoint that is posted to a blockchain by its hierarchy of confidence tier. If an oracle simply posts a datapoint by themselves, then that is a tier-1 datapoint. If an oracle pool (or some other scheme where a group of oracles average their datapoints together) produces a datapoint, then then that is considered a tier-2 datapoint. And of course, a pool of oracle pools produces a tier-3 datapoint.
 
-With oracle pools used within the datapoint hierarchy of confidence, the higher tier that a datapoint is the higher level of assurance that can be expected from said datapoint. This is because at the core of oracle pools we have strong incentives/disincentives in place to keep oracles acting properly. This fact is magnified further with datapoint hierarchies of confidence. (Unfortunately current oracle schemes today typically have limited incentives/disincentive mechanisms, thus it is harder to build trustworthy hierarchies out of them)
+With oracle pools used within the datapoint hierarchy of confidence, the higher tier that a datapoint is the higher level of assurance that can be expected from said datapoint. This is because at the core of oracle pools we have strong incentives/disincentives in place to keep oracles acting properly. This fact is magnified further with datapoint hierarchies of confidence. (Unfortunately current oracle schemes today typically have limited incentive/disincentive mechanisms, thus it is harder to build trustworthy hierarchies out of them)
 
-The very same carrots/sticks used by oracles pools to keep oracles in check can be used on the tier-3 level for the oracle pools themselves. As such, in a 3 tier datapoint hierarchy of confidence, an oracle pool does not acquire funds directly from its users. Instead, it receives funds if it acted properly (and thus is required to put up stake). Thus, just like an individual oracle, the oracle pool must:
+The very same carrots/sticks used by oracle pools to keep oracles in check can be used on the tier-3 level for the oracle pools themselves. As such, in a 3 tier datapoint hierarchy of confidence, an oracle pool does not acquire funds directly from its users. Instead, it receives funds if it acted properly (and thus is required to put up stake). Thus, just like an individual oracle, the oracle pool must:
 - Provide a datapoint that is within a margin of error of the averaged out final datapoint (in order to be paid out)
 - Post the pool's finalized datapoint on time within the tier-3 entity's epoch (or get stake slashed)
-- The tier-3 datapoint collector must accurately collect all oracle pool datapoints submit in the current epoch (or get stake slashed)
-- Etc.
+
+Further, the tier-3 datapoint collector must accurately collect all oracle pool datapoints submit in the current epoch (or get stake slashed).
 
 This also means that datapoint hierarchies of confidence can also have all of the other bells and whistles talked about above for oracle pools. For example, a DAO can be integrated where oracle pools get the right to vote on the parameters of the tier-3 entity (epoch length, posting price, etc.) or the list of approved oracle pools who are part of the hierarchy. Other possibilities like dynamic entry of oracle pools, or requiring leader checking on the pool level can be added as well.
 
@@ -238,7 +239,7 @@ This tier-4 hierarchy built off of both types of oracle pools can be especially 
 
 One of the great benefits of signed datapoints, is that they require no trust and thus no consensus between multiple oracles. What this means is that dynamic entry of oracles into a first-to-post oracle pool is trivial to implement.
 
-Any oracle, no matter how well known or unknown they may be, can join a pool and be paid for doing their job. All they have to do is manage being the first to post the datapoint on-chain. This often equates to having a good internet connection plus submitting the highest fee in order for their tx to be accepted first.
+Any oracle, no matter how well known or unknown it may be, can join a pool and be paid for doing its job. All it has to do is manage being the first to post the datapoint on-chain. This often equates to having a good internet connection plus submitting the highest fee in order for its tx to be accepted first.
 
 As such, first-to-post oracle pools incentivize oracles to spend more on fees, thereby increasing the speed at which their datapoints are accepted onto the chain even when congestion theoretically becomes an issue. The incentives are aligned for both the oracles who wish to be paid out, and for the users who will eventually consume said oracle data after it gets accumulated upwards throughout the datapoint hierarchy.
 
@@ -256,6 +257,6 @@ Though this document outlined a number of options available when implementing or
 
 This research, and the very first Oracle Pool implementation, are part of the recent [partnership between Ergo and Emurgo](https://emurgo.io/en/blog/emurgo-to-partner-with-ergo-and-build-blockchain-based-decentralized-financial-solutions). This partnership is leading the way to the first key discoveries in DeFi for all UTXO-based blockchains (Cardano, Ergo, etc).
 
-The first oracle pool implementation will be deployed on the live [Ergo](ergoplatform.org/) mainnet, which is the first blockchain to support full fledged turing complete (across transactions) smart contracts in the extended UTXO model. Protocol specifications, contracts, and more info about the first implementation will be released publicly in the near future.
+The first oracle pool implementation will be deployed on the live [Ergo](ergoplatform.org/) mainnet, which is the first blockchain to support full fledged Turing complete (across transactions) smart contracts in the extended UTXO model. Protocol specifications, contracts, and more info about the first implementation will be released publicly in the near future.
 
 With oracle pools being the first major step into the novel extended UTXO smart contract model, the future potential is already becoming hard to ignore. From uncovering unknown DeFi dApp design patterns to finding new solutions to old problems, it is clear that smart contracts are still a nascent technology with many new advancements just waiting to be discovered.
